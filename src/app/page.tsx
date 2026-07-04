@@ -1,65 +1,132 @@
-import Image from "next/image";
+'use client'
 
-export default function Home() {
+import Link from 'next/link'
+import { useSessionStore } from '@/store/session-store'
+import { Button } from '@/components/ui/button'
+import { Card } from '@/components/ui/card'
+import { Zap, Goal, Grid3X3, ArrowRight, Keyboard, Sparkles, TrendingUp, Clock } from 'lucide-react'
+
+const features = [
+  {
+    href: '/train',
+    icon: Zap,
+    title: 'Train',
+    desc: 'Rapid-fire decision training with spaced repetition',
+    color: 'text-primary',
+    bg: 'bg-primary/10',
+  },
+  {
+    href: '/mistakes',
+    icon: Goal,
+    title: 'Mistakes',
+    desc: 'Review and reinforce your weakest spots',
+    color: 'text-destructive',
+    bg: 'bg-destructive/10',
+  },
+  {
+    href: '/range-painter',
+    icon: Grid3X3,
+    title: 'Range Painter',
+    desc: 'Build and visualize poker ranges',
+    color: 'text-accent',
+    bg: 'bg-accent/10',
+  },
+]
+
+export default function HomePage() {
+  const { sessionHistory, stats } = useSessionStore()
+  const hasSessions = sessionHistory.length > 0
+
   return (
-    <div className="flex flex-col flex-1 items-center justify-center bg-zinc-50 font-sans dark:bg-black">
-      <main className="flex flex-1 w-full max-w-3xl flex-col items-center justify-between py-32 px-16 bg-white dark:bg-black sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
-        />
-        <div className="flex flex-col items-center gap-6 text-center sm:items-start sm:text-left">
-          <h1 className="max-w-xs text-3xl font-semibold leading-10 tracking-tight text-black dark:text-zinc-50">
-            To get started, edit the page.tsx file.
+    <div className="flex-1 flex flex-col items-center justify-center p-6">
+      <div className="max-w-lg w-full space-y-8 animate-fade-in-up">
+        {/* Hero */}
+        <div className="text-center space-y-4">
+          <div className="inline-flex items-center justify-center size-16 rounded-2xl bg-primary/10 text-primary mb-2 ring-1 ring-primary/20">
+            <Sparkles className="size-8" />
+          </div>
+          <h1 className="text-4xl font-bold tracking-tight">
+            <span className="text-primary">♠</span> Poker Trainer
           </h1>
-          <p className="max-w-md text-lg leading-8 text-zinc-600 dark:text-zinc-400">
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Learning
-            </a>{" "}
-            center.
+          <p className="text-muted-foreground text-base leading-relaxed max-w-sm mx-auto">
+            Master your preflop and postflop decisions with rapid-fire repetition and smart spaced review.
           </p>
         </div>
-        <div className="flex flex-col gap-4 text-base font-medium sm:flex-row">
-          <a
-            className="flex h-12 w-full items-center justify-center gap-2 rounded-full bg-foreground px-5 text-background transition-colors hover:bg-[#383838] dark:hover:bg-[#ccc] md:w-[158px]"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={16}
-            />
-            Deploy Now
-          </a>
-          <a
-            className="flex h-12 w-full items-center justify-center rounded-full border border-solid border-black/[.08] px-5 transition-colors hover:border-transparent hover:bg-black/[.04] dark:border-white/[.145] dark:hover:bg-[#1a1a1a] md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Documentation
-          </a>
+
+        {/* Feature cards */}
+        <div className="grid gap-3">
+          {features.map((f, i) => {
+            const Icon = f.icon
+            return (
+              <Link
+                key={f.href}
+                href={f.href}
+                className="group block animate-fade-in-up"
+                style={{ animationDelay: `${(i + 1) * 150}ms` }}
+              >
+                <Card className="p-4 flex items-center gap-4 hover:ring-2 hover:ring-primary/30 transition-all hover:-translate-y-0.5 duration-200">
+                  <div className={`p-2.5 rounded-xl ${f.bg} ${f.color}`}>
+                    <Icon className="size-5" />
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <div className="font-semibold text-sm">{f.title}</div>
+                    <div className="text-xs text-muted-foreground">{f.desc}</div>
+                  </div>
+                  <ArrowRight className="size-4 text-muted-foreground group-hover:text-primary group-hover:translate-x-0.5 transition-all" />
+                </Card>
+              </Link>
+            )
+          })}
         </div>
-      </main>
+
+        {/* Quick stats */}
+        {hasSessions && (
+          <Card className="p-4 animate-fade-in-up" style={{ animationDelay: '500ms' }}>
+            <div className="flex items-center justify-between mb-3">
+              <span className="text-xs font-semibold uppercase tracking-wider text-muted-foreground flex items-center gap-1.5">
+                <TrendingUp className="size-3" />
+                Your Progress
+              </span>
+            </div>
+            <div className="grid grid-cols-3 gap-4 text-center">
+              <div>
+                <div className="text-xl font-bold">{sessionHistory.length}</div>
+                <div className="text-[10px] text-muted-foreground uppercase tracking-wider">Sessions</div>
+              </div>
+              <div>
+                <div className="text-xl font-bold">{Math.round(stats.overallAccuracy * 100)}%</div>
+                <div className="text-[10px] text-muted-foreground uppercase tracking-wider">Accuracy</div>
+              </div>
+              <div>
+                <div className="text-xl font-bold">{stats.totalDecisions}</div>
+                <div className="text-[10px] text-muted-foreground uppercase tracking-wider">Total Hands</div>
+              </div>
+            </div>
+          </Card>
+        )}
+
+        {/* CTA */}
+        <div className="text-center animate-fade-in-up" style={{ animationDelay: '600ms' }}>
+          <Link href="/train">
+            <Button variant="gold" size="xl" className="w-full gap-2 text-base">
+              Start Training
+              <Zap className="size-4" />
+            </Button>
+          </Link>
+        </div>
+
+        {/* Keyboard hints */}
+        <div className="flex items-center justify-center gap-4 text-[10px] text-muted-foreground animate-fade-in-up" style={{ animationDelay: '700ms' }}>
+          <span className="flex items-center gap-1">
+            <Keyboard className="size-3" />
+            F C R — Fold Call Raise
+          </span>
+          <span className="flex items-center gap-1">
+            <Clock className="size-3" />
+            ~3s per decision
+          </span>
+        </div>
+      </div>
     </div>
-  );
+  )
 }
