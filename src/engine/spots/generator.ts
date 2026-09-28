@@ -28,11 +28,13 @@ function pickWeighted<T>(items: T[], weights: number[]): T {
   return items[items.length - 1]
 }
 
-function selectScenario(priorities?: Record<ScenarioType, number>): ScenarioType {
+function selectScenario(priorities?: Partial<Record<ScenarioType, number>>): ScenarioType {
   if (priorities) {
-    const types = Object.keys(priorities) as ScenarioType[]
-    const weights = types.map(t => priorities[t])
-    return pickWeighted(types, weights)
+    const types = Object.keys(priorities).filter(t => (priorities[t as ScenarioType] ?? 0) > 0) as ScenarioType[]
+    if (types.length) {
+      const weights = types.map(t => priorities[t] ?? 0)
+      return pickWeighted(types, weights)
+    }
   }
   const weights = SCENARIO_TYPES.map(getScenarioWeight)
   return pickWeighted(SCENARIO_TYPES, weights)
@@ -85,7 +87,7 @@ function generateStackSize(format: Format, scenario: ScenarioType): StackSize {
 export interface SpotGeneratorConfig {
   format?: Format
   stackSize?: StackSize
-  scenarioPriorities?: Record<ScenarioType, number>
+  scenarioPriorities?: Partial<Record<ScenarioType, number>>
   difficultyRange?: [number, number]
 }
 

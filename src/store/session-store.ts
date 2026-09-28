@@ -1,4 +1,5 @@
 import { create } from 'zustand'
+import { persist } from 'zustand/middleware'
 import { SessionSummary, SessionConfig, Attempt, Mistake } from '../engine/types'
 
 interface SessionState {
@@ -22,7 +23,7 @@ interface SessionState {
   recalculateStats: () => void
 }
 
-export const useSessionStore = create<SessionState>((set, get) => ({
+export const useSessionStore = create<SessionState>()(persist((set, get) => ({
   sessionHistory: [],
   recentAttempts: [],
   mistakeList: [],
@@ -93,4 +94,13 @@ export const useSessionStore = create<SessionState>((set, get) => ({
       },
     })
   },
+}), {
+  name: 'poker-trainer-session',
+  partialize: (state) => ({
+    sessionHistory: state.sessionHistory,
+    recentAttempts: state.recentAttempts,
+    mistakeList: state.mistakeList,
+    config: state.config,
+    stats: state.stats,
+  }),
 }))

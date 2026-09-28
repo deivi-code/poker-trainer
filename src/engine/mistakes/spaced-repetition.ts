@@ -13,12 +13,19 @@ export interface MistakeStore {
 
 export function createMistakeStore(): MistakeStore {
   const mistakes = new Map<string, Mistake>()
+  if (typeof window !== 'undefined') {
+    try {
+      const saved = JSON.parse(window.localStorage.getItem('poker-trainer-mistakes') ?? '[]') as Mistake[]
+      saved.forEach((mistake) => mistakes.set(mistake.id, mistake))
+    } catch { /* ignore malformed local data */ }
+  }
 
   return {
     mistakes,
 
     add(mistake: Mistake) {
       mistakes.set(mistake.id, mistake)
+      persistMistakes(mistakes)
     },
 
     get(id: string) {
@@ -33,6 +40,7 @@ export function createMistakeStore(): MistakeStore {
       const existing = mistakes.get(id)
       if (existing) {
         mistakes.set(id, { ...existing, ...updates })
+        persistMistakes(mistakes)
       }
     },
 
@@ -52,8 +60,14 @@ export function createMistakeStore(): MistakeStore {
 
     remove(id: string) {
       mistakes.delete(id)
+      persistMistakes(mistakes)
     },
   }
+}
+
+function persistMistakes(mistakes: Map<string, Mistake>): void {
+  if (typeof window === 'undefined') return
+  window.localStorage.setItem('poker-trainer-mistakes', JSON.stringify(Array.from(mistakes.values())))
 }
 
 const BASE_INTERVALS_MS = [

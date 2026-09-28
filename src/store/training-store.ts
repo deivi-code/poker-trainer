@@ -4,6 +4,7 @@ import { generateSpot } from '../engine/spots/generator'
 import { SessionManager } from '../engine/session/manager'
 import { createMistakeStore, createMistakeInjector } from '../engine/mistakes/spaced-repetition'
 import { saveAttempt, saveSession, saveMistake } from '@/app/actions/session'
+import { useSessionStore } from './session-store'
 
 interface TrainingState {
   sessionManager: SessionManager | null
@@ -124,6 +125,8 @@ export const useTrainingStore = create<TrainingState>((set, get) => ({
       }
     }
 
+    useSessionStore.getState().addRecentAttempts([result.attempt])
+    useSessionStore.getState().recalculateStats()
     set({
       previousResult: {
         correctAction: result.attempt.correctAction,
