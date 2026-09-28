@@ -92,11 +92,14 @@ export interface Mistake {
   nextReviewAt: number
 }
 
+export type TrainingMode = 'preflop' | 'postflop' | 'both'
+
 export interface SessionConfig {
   totalDecisions: number
   mistakeBoost: boolean
   mistakeRatio: number
   timeLimit: number | null
+  trainingMode?: TrainingMode
 }
 
 export interface TrainingSession {

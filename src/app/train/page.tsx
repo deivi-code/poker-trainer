@@ -13,6 +13,7 @@ import { RangeReference } from '@/components/training/RangeReference'
 import { SessionSummaryView } from '@/components/session/SessionSummary'
 import { cn } from '@/lib/utils'
 import { Zap, Sparkles, ArrowRight, ChevronDown, ChevronUp } from 'lucide-react'
+import type { TrainingMode } from '@/engine/types'
 
 const SESSION_SIZES = [
   { count: 20, label: 'Quick', desc: '20 decisions · ~5 min', icon: Zap },
@@ -40,6 +41,7 @@ export default function TrainPage() {
   const [showSetup, setShowSetup] = useState(true)
   const [showRange, setShowRange] = useState(true)
   const [selectedSize, setSelectedSize] = useState<number | null>(null)
+  const [trainingMode, setTrainingMode] = useState<TrainingMode>('both')
   const [tableView, setTableView] = useState(() => {
     if (typeof window !== 'undefined') {
       return localStorage.getItem('poker-trainer-view') !== 'text'
@@ -52,7 +54,7 @@ export default function TrainPage() {
   }, [tableView])
 
   const handleStart = useCallback((count: number) => {
-    startSession({ totalDecisions: count, mistakeBoost: true, mistakeRatio: 0.3, timeLimit: null }, user?.id)
+    startSession({ totalDecisions: count, mistakeBoost: true, mistakeRatio: 0.3, timeLimit: null, trainingMode }, user?.id)
     setShowSetup(false)
   }, [startSession, user])
 
@@ -114,6 +116,29 @@ export default function TrainPage() {
               Train your preflop and postflop decisions with rapid-fire repetition
             </p>
           </div>
+
+          <div className="grid grid-cols-3 gap-2 rounded-xl border border-border bg-card p-1.5" role="group" aria-label="Exercise type">
+            {([
+              ['preflop', 'Preflop'],
+              ['postflop', 'Postflop'],
+              ['both', 'Both'],
+            ] as const).map(([mode, label]) => (
+              <button
+                key={mode}
+                type="button"
+                onClick={() => setTrainingMode(mode)}
+                className={cn(
+                  'rounded-lg px-2 py-2 text-xs font-semibold transition-colors',
+                  trainingMode === mode ? 'bg-primary text-primary-foreground' : 'text-muted-foreground hover:bg-muted'
+                )}
+                aria-pressed={trainingMode === mode}
+              >
+                {label}
+              </button>
+            ))}
+          </div>
+
+          <p className="text-center text-xs text-muted-foreground">Choose which spots to practice</p>
 
           <div className="space-y-2.5">
             {SESSION_SIZES.map((s, i) => {

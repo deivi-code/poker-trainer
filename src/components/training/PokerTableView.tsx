@@ -29,7 +29,7 @@ function suitSymbol(suit: string): string {
 }
 
 function suitColor(suit: string): string {
-  return suit === 'h' || suit === 'd' ? 'text-red-500' : 'text-gray-800 dark:text-gray-200'
+  return suit === 'h' || suit === 'd' ? 'text-red-700' : 'text-slate-950'
 }
 
 export function PokerTableView({ spot }: PokerTableViewProps) {
@@ -100,7 +100,7 @@ export function PokerTableView({ spot }: PokerTableViewProps) {
             actionState.board.map((card, i) => (
               <span
                 key={i}
-                className={`inline-flex items-center justify-center w-8 h-11 rounded-md bg-white shadow-md border border-gray-300 text-sm font-bold ${suitColor(card.suit)}`}
+                className={`inline-flex items-center justify-center w-8 h-11 rounded-md bg-slate-50 shadow-md border-2 border-slate-300 text-sm font-bold ${suitColor(card.suit)}`}
               >
                 <span className="leading-none drop-shadow-sm">{card.rank}{suitSymbol(card.suit)}</span>
               </span>
@@ -116,7 +116,7 @@ export function PokerTableView({ spot }: PokerTableViewProps) {
         {actionState.street !== 'preflop' && (
           <div className="flex gap-1.5 mb-2">
             <span
-              className={`inline-flex items-center justify-center w-8 h-11 rounded-md bg-white shadow-md text-sm font-bold ${suitColor(c1.suit)}`}
+              className={`inline-flex items-center justify-center w-8 h-11 rounded-md bg-slate-50 shadow-md border-2 border-slate-300 text-sm font-bold ${suitColor(c1.suit)}`}
             >
               <span className="leading-none drop-shadow-sm">{c1.rank}{suitSymbol(c1.suit)}</span>
             </span>

@@ -50,7 +50,13 @@ export class SessionManager {
     const mistakesSpots = this.injector.injectMistakes(mistakeCount)
     const freshSpots: Spot[] = []
     for (let i = 0; i < count - mistakeCount; i++) {
-      freshSpots.push(generateSpot())
+      freshSpots.push(generateSpot({
+          scenarioPriorities: this.session.config.trainingMode === 'preflop'
+            ? { 'preflop-open': 3, 'preflop-vs-open': 3, 'preflop-vs-3bet': 2, 'preflop-blind-defense': 2 }
+            : this.session.config.trainingMode === 'postflop'
+              ? { 'postflop-cbet': 3, 'postflop-vs-cbet': 3, 'postflop-turn': 2, 'postflop-river': 2 }
+              : undefined,
+        }))
     }
 
     return [...mistakesSpots, ...freshSpots].sort(() => Math.random() - 0.5)
